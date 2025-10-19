@@ -104,7 +104,7 @@ workflows:
     publishing:
       email:
         recipients:
-          - user@example.com
+          - zalethdamata@gmail.com
         notify:
           success: true
           failure: true
