@@ -1,0 +1,116 @@
+workflows:
+  android-workflow:
+    name: "🤖 Ionic Cordova Android Build"
+    max_build_duration: 90
+    environment:
+      node: "18"
+      npm: "9"
+      android_signing:
+        - keystore_reference
+      vars:
+        CORDOVA_PLATFORM: "android"
+      groups:
+        - google_play
+    cache:
+      cache_paths:
+        - $CM_BUILD_DIR/node_modules
+        - ~/.npm
+
+    scripts:
+      - name: "📦 Instalar dependencias"
+        script: |
+          npm install -g @ionic/cli cordova
+          npm ci
+          ionic info
+
+      - name: "⚙️ Configurar plataforma Android"
+        script: |
+          ionic cordova platform rm android --nosave || true
+          ionic cordova platform add android --no-interactive --noresources --confirm
+
+      - name: "🏗️ Compilar APK release"
+        script: |
+          ionic cordova build android --release --no-interactive --confirm
+          ls -la platforms/android/app/build/outputs/apk/release/
+
+      - name: "🔐 Firmar APK"
+        script: |
+          APK_PATH=$(find platforms/android/app/build/outputs/apk/release -name "*.apk" | head -1)
+          jarsigner \
+            -sigalg SHA1withRSA \
+            -digestalg SHA1 \
+            -keystore $CM_KEYSTORE_PATH \
+            -storepass $CM_KEYSTORE_PASSWORD \
+            -keypass $CM_KEY_PASSWORD \
+            "$APK_PATH" $CM_KEY_ALIAS
+          zipalign -v 4 "$APK_PATH" "${APK_PATH%.apk}-aligned.apk"
+
+    artifacts:
+      - platforms/android/app/build/outputs/**/*.apk
+
+    publishing:
+      email:
+        recipients:
+          - user@example.com
+        notify:
+          success: true
+          failure: true
+      google_play:
+        credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
+        track: internal
+
+  ios-workflow:
+    name: "🍎 Ionic Cordova iOS Build"
+    integrations:
+      app_store_connect: codemagic
+    environment:
+      xcode: "15.0"
+      node: "18"
+      npm: "9"
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.tuempresa.tuapp
+    cache:
+      cache_paths:
+        - $CM_BUILD_DIR/node_modules
+        - ~/.npm
+
+    scripts:
+      - name: "📦 Instalar dependencias"
+        script: |
+          npm install -g @ionic/cli cordova
+          npm ci
+          ionic info
+
+      - name: "⚙️ Configurar plataforma iOS"
+        script: |
+          ionic cordova platform rm ios --nosave || true
+          ionic cordova platform add ios --no-interactive --noresources --confirm
+          xcode-project use-profiles
+
+      - name: "🏗️ Compilar IPA para release"
+        script: |
+          ionic cordova build ios --release --device --no-interactive --confirm
+
+      - name: "📦 Exportar IPA"
+        script: |
+          mkdir -p build_output
+          cp -R platforms/ios/build/device/*.ipa build_output/
+
+    artifacts:
+      - build_output/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+
+    publishing:
+      email:
+        recipients:
+          - user@example.com
+        notify:
+          success: true
+          failure: true
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
+        beta_groups:
+          - testers
+        submit_to_app_store: false
