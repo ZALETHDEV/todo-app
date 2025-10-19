@@ -68,7 +68,7 @@ workflows:
       node: "18"
       npm: "9"
       ios_signing:
-        distribution_type: app_store
+        distribution_type: ad_hoc
         bundle_identifier: com.zaleth.todoapp
     cache:
       cache_paths:
