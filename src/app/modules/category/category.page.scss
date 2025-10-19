@@ -1,0 +1,261 @@
+ion-content {
+  --background: var(--ion-background-color);
+  padding-bottom: 80px;
+}
+
+/* ===============================
+   FORMULARIO DE CATEGORÍAS (en modal)
+================================= */
+.category-form,
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  background: var(--ion-color-light);
+  border-radius: 16px;
+  padding: 1.2rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 12px rgba(var(--ion-color-dark-rgb), 0.15);
+  animation: fadeInDown 0.3s ease;
+
+  ion-item {
+    --background: transparent;
+    margin-bottom: 0.6rem;
+  }
+
+  .actions {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
+
+/* ===============================
+   LISTA DE CATEGORÍAS
+================================= */
+.category-card {
+  border-radius: 14px;
+  margin-bottom: 0.8rem;
+  box-shadow: 0 2px 6px rgba(var(--ion-color-dark-rgb), 0.08);
+  background: var(--ion-color-light);
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+  overflow: hidden;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 14px rgba(var(--ion-color-dark-rgb), 0.12);
+  }
+
+  ion-card-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  .color-preview {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+    flex-shrink: 0;
+  }
+
+  .text-content {
+    flex: 1;
+    min-width: 0;
+
+    h2 {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--ion-text-color);
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    p {
+      margin: 0;
+      font-size: 0.8rem;
+      color: var(--ion-color-medium);
+    }
+  }
+
+  ion-button {
+    --padding-start: 0;
+    --padding-end: 0;
+  }
+}
+
+/* ===============================
+   ESTADO VACÍO
+================================= */
+.empty-state {
+  text-align: center;
+  margin-top: 4rem;
+  opacity: 0.8;
+  animation: fadeIn 0.4s ease;
+
+  ion-icon {
+    font-size: 4rem;
+    color: var(--ion-color-medium);
+  }
+
+  p {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--ion-color-medium);
+    margin-top: 0.8rem;
+  }
+}
+
+/* ===============================
+   MODAL
+================================= */
+ion-modal {
+  --backdrop-opacity: 0.45;
+  --border-radius: 20px 20px 0 0;
+  --box-shadow: 0 -2px 20px rgba(var(--ion-color-dark-rgb), 0.15);
+  backdrop-filter: blur(6px);
+
+  ion-content {
+    --background: var(--ion-color-light);
+    border-radius: 20px 20px 0 0;
+    animation: slideUp 0.35s ease;
+  }
+
+  ion-toolbar {
+    border-radius: 20px 20px 0 0;
+  }
+
+  .actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin-top: 1rem;
+  }
+}
+
+/* ===============================
+   BOTÓN FLOTANTE (FAB)
+================================= */
+ion-fab-button {
+  --background: var(--ion-color-primary);
+  --box-shadow: 0 6px 16px rgba(var(--ion-color-primary-rgb), 0.4);
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+
+  &:active {
+    transform: scale(0.95);
+    --box-shadow: 0 4px 12px rgba(var(--ion-color-primary-rgb), 0.3);
+  }
+}
+
+/* ===============================
+   ANIMACIONES
+================================= */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(25px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* ===============================
+   MODO OSCURO (refinado)
+================================= */
+@media (prefers-color-scheme: dark) {
+  ion-content {
+    --background: #0e0e10;
+  }
+
+  ion-toolbar {
+    --background: var(--ion-color-primary);
+    --color: #fff;
+  }
+
+  .category-form,
+  form {
+    background: #1a1a1d;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+
+    ion-input,
+    ion-label {
+      --color: #fff;
+    }
+  }
+
+  .category-card {
+    background: #1d1f23;
+    color: #f4f4f4;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+
+    .text-content h2 {
+      color: #fff;
+    }
+
+    .text-content p {
+      color: #b0b0b0;
+    }
+
+    .color-preview {
+      border-color: #1d1f23;
+      box-shadow: 0 0 6px rgba(255, 255, 255, 0.2);
+    }
+  }
+
+  .empty-state ion-icon {
+    color: #777;
+  }
+
+  .empty-state p {
+    color: #999;
+  }
+
+  ion-modal {
+    --backdrop-opacity: 0.6;
+
+    ion-content {
+      --background: var(--ion-color-dark);
+    }
+
+    ion-toolbar {
+      background: var(--ion-color-dark-tint);
+      color: var(--ion-color-light);
+    }
+  }
+
+  ion-fab-button {
+    --background: var(--ion-color-primary);
+    --color: #fff;
+    --box-shadow: 0 6px 16px rgba(var(--ion-color-primary-rgb), 0.5);
+  }
+}

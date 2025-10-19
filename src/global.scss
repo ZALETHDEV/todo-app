@@ -35,3 +35,37 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import "@ionic/angular/css/palettes/dark.system.css";
+
+html {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+ion-content,
+ion-card,
+ion-toolbar,
+ion-chip,
+ion-fab-button {
+  transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+}
+
+ion-fab-button[data-desc] {
+  position: relative;
+}
+
+ion-fab-button[data-desc]::after {
+  content: attr(data-desc);
+  position: absolute;
+  right: 50px; /* Adjust as needed for positioning */
+  bottom: 7px; /* Adjust as needed for positioning */
+  background-color: var(--ion-color-primary, #3880ff); /* Example color */
+  color: var(--ion-color-primary-contrast, #fff); /* Example color */
+  padding: 5px 10px;
+  border-radius: 5px;
+  white-space: nowrap; /* Prevents text wrapping */
+  z-index: 1; /* Ensures label is above other elements */
+  box-shadow: 0 3px 5px -1px rgba(0, 0, 0, 0.2), 
+              0 6px 10px 0 rgba(0, 0, 0, 0.14), 
+              0 1px 18px 0 rgba(0, 0, 0, 0.12);
+}
+
+

@@ -1,0 +1,126 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Mis Tareas</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-item lines="none" class="filter-item" *ngIf="categories.length > 0">
+    <div class="category-filter">
+    <ion-chip
+        [color]="!selectedCategoryId ? 'primary' : 'medium'"
+        (click)="selectedCategoryId = undefined; onCategoryFilterChange()">
+        Todas
+      </ion-chip>
+
+    <ion-chip
+      *ngFor="let cat of categories"
+      [color]="selectedCategoryId === cat.id ? 'primary' : 'medium'"
+      (click)="selectedCategoryId = cat.id; onCategoryFilterChange()">
+      <ion-avatar
+        slot="start"
+        [style.background]="cat.color"
+        class="chip-color">
+      </ion-avatar>
+      {{ cat.name }}
+    </ion-chip>
+    </div>
+  </ion-item>
+
+  <div *ngIf="showForm" class="todo-form">
+    <form [formGroup]="todoForm" (ngSubmit)="addTodo()">
+      <ion-item>
+        <ion-input
+          placeholder="¿Qué necesitas hacer?"
+          formControlName="title"
+          clearInput>
+        </ion-input>
+      </ion-item>
+
+      <ion-item *ngIf="categories.length > 0">
+        <ion-label>Categoría</ion-label>
+        <ion-select placeholder="Selecciona categoría" formControlName="categoryId">
+          <ion-select-option [value]="undefined">Sin categoría</ion-select-option>
+          <ion-select-option *ngFor="let cat of categories" [value]="cat.id">
+            <ion-badge [style.background]="cat.color" style="margin-right:8px;"></ion-badge>
+            {{ cat.name }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+      
+      <div class="actions">
+        <ion-button
+          expand="block"
+          type="submit"
+          color="secondary"
+          [disabled]="todoForm.invalid">
+          <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+            Agregar
+        </ion-button>
+        <ion-button expand="block" fill="clear" (click)="toggleForm()">
+          Cancelar
+        </ion-button>
+      </div>
+    </form>
+  </div>
+
+  <ion-list *ngIf="todos.length > 0; else empty">
+    <ion-card
+      *ngFor="let todo of todos"
+      class="todo-card"
+      [class.done]="todo.done"
+      [style.--category-color]="getCategory(todo)?.color || '#ccc'"
+      (click)="toggleDone(todo)">
+      <ion-card-content>
+        <div class="todo-item">
+          <ion-icon
+            [name]="todo.done ? 'checkmark-circle' : 'ellipse-outline'"
+            [color]="todo.done ? 'success' : 'medium'"
+            class="status-icon">
+          </ion-icon>
+
+          <div class="text-content">
+            <h2>{{ todo.title }}</h2>
+            <p>{{ todo.createdAt | date:'shortDate' }}</p>
+
+            <p class="category-label" *ngIf="getCategory(todo)">
+              <ion-badge [style.background]="getCategory(todo)?.color || '#ccc'"></ion-badge>
+              {{ getCategory(todo)?.name || 'Sin categoría' }}
+            </p>
+          </div>
+
+          <ion-button
+            fill="clear"
+            color="danger"
+            size="small"
+            (click)="delete(todo); $event.stopPropagation();">
+            <ion-icon name="trash-outline"></ion-icon>
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </ion-list>
+
+
+  <ng-template #empty>
+    <div class="empty-state">
+      <ion-icon name="checkmark-done-outline"></ion-icon>
+      <p>No tienes tareas pendientes...</p>
+    </div>
+  </ng-template>
+
+<ion-fab slot="fixed" horizontal="end" vertical="bottom">
+  <ion-fab-button color="primary">
+    <ion-icon name="add"></ion-icon>
+  </ion-fab-button>
+  <ion-fab-list side="top">
+     <ion-fab-button color="primary" data-desc="Categorías" [routerLink]="['/category']">
+        <ion-icon name="apps-outline"></ion-icon>
+      </ion-fab-button>
+        <ion-fab-button color="primary" data-desc="Añadir Tarea" (click)="toggleForm()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab-list>
+</ion-fab>
+
+</ion-content>
