@@ -8,9 +8,11 @@ import {
 import { Todo } from './models/todo.model';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TodoService } from './services/todo-service';
-import { ToastController } from '@ionic/angular';
+import { RefresherCustomEvent, ToastController } from '@ionic/angular';
 import { CategoryService } from '../category/services/category-service';
 import { Category } from '../category/models/category.model';
+import { FeatureFlagService } from 'src/app/core/services/feature-flag-service';
+import { CATEGORY_FLAG } from 'src/app/core/constants/constants';
 
 @Component({
   selector: 'app-todo',
@@ -24,12 +26,14 @@ export class TodoPage implements OnInit {
   selectedCategoryId?: number;
   todoForm!: FormGroup;
   showForm = false;
+  buttonTaskEnable: boolean = false;
 
   constructor(
     private fb: FormBuilder,
     private todoService: TodoService,
     private categoryService: CategoryService,
-    private toastCtrl: ToastController
+    private toastCtrl: ToastController,
+    private featureFlag: FeatureFlagService
   ) {}
 
   async ngOnInit() {
@@ -38,12 +42,16 @@ export class TodoPage implements OnInit {
       categoryId: [null],
     });
 
+    this.buttonTaskEnable = await this.featureFlag.isFeatureEnabled(
+      CATEGORY_FLAG
+    );
     await this.loadCategories();
     await this.loadTodos();
+    console.log(this.buttonTaskEnable);
   }
 
   async loadCategories() {
-    this.categories = await this.categoryService.getAll();   
+    this.categories = await this.categoryService.getAll();
   }
 
   async loadTodos() {
@@ -69,7 +77,7 @@ export class TodoPage implements OnInit {
     await this.todoService.add(title, category);
     this.todoForm.reset();
     this.showForm = false;
-    
+
     await this.loadTodos();
     this.showToast('Tarea agregada');
   }
@@ -101,5 +109,12 @@ export class TodoPage implements OnInit {
       position: 'bottom',
     });
     await toast.present();
+  }
+
+  handleRefresh(event: RefresherCustomEvent) {
+    setTimeout(() => {
+      this.ngOnInit();
+      event.target.complete();
+    }, 2000);
   }
 }
