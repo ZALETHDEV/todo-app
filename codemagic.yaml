@@ -69,7 +69,7 @@ workflows:
       npm: "9"
       ios_signing:
         distribution_type: app_store
-        bundle_identifier: com.tuempresa.tuapp
+        bundle_identifier: com.zaleth.todoapp
     cache:
       cache_paths:
         - $CM_BUILD_DIR/node_modules
