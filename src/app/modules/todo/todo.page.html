@@ -5,7 +5,10 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-  <ion-item lines="none" class="filter-item" *ngIf="categories.length > 0">
+    <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+      <ion-refresher-content></ion-refresher-content>
+    </ion-refresher>
+  <ion-item lines="none" class="filter-item" *ngIf="buttonTaskEnable && categories.length > 0">
     <div class="category-filter">
     <ion-chip
         [color]="!selectedCategoryId ? 'primary' : 'medium'"
@@ -37,7 +40,7 @@
         </ion-input>
       </ion-item>
 
-      <ion-item *ngIf="categories.length > 0">
+      <ion-item *ngIf="buttonTaskEnable && categories.length > 0">
         <ion-label>Categoría</ion-label>
         <ion-select placeholder="Selecciona categoría" formControlName="categoryId">
           <ion-select-option [value]="undefined">Sin categoría</ion-select-option>
@@ -69,7 +72,7 @@
       *ngFor="let todo of todos"
       class="todo-card"
       [class.done]="todo.done"
-      [style.--category-color]="getCategory(todo)?.color || '#ccc'"
+      [style.--category-color]="buttonTaskEnable ? (getCategory(todo)?.color || '#ccc') : null"
       (click)="toggleDone(todo)">
       <ion-card-content>
         <div class="todo-item">
@@ -83,7 +86,7 @@
             <h2>{{ todo.title }}</h2>
             <p>{{ todo.createdAt | date:'shortDate' }}</p>
 
-            <p class="category-label" *ngIf="getCategory(todo)">
+            <p class="category-label" *ngIf="buttonTaskEnable && getCategory(todo)">
               <ion-badge [style.background]="getCategory(todo)?.color || '#ccc'"></ion-badge>
               {{ getCategory(todo)?.name || 'Sin categoría' }}
             </p>
@@ -114,7 +117,7 @@
     <ion-icon name="add"></ion-icon>
   </ion-fab-button>
   <ion-fab-list side="top">
-     <ion-fab-button color="primary" data-desc="Categorías" [routerLink]="['/category']">
+     <ion-fab-button *ngIf="buttonTaskEnable" color="primary" data-desc="Categorías" [routerLink]="['/category']">
         <ion-icon name="apps-outline"></ion-icon>
       </ion-fab-button>
         <ion-fab-button color="primary" data-desc="Añadir Tarea" (click)="toggleForm()">
